@@ -2,7 +2,7 @@
 //The sendCommand() function constructs the URL with the command as a query parameter.
 // We use encodeURIComponent() to ensure that the command is properly encoded if it contains special characters.
 function sendCommand(command) {
-  var url = "http://192.168.1.169/led?command=" + encodeURIComponent(command);//access to the arduino server using its IP
+  var url = "http://192.168.1.169?command=" + encodeURIComponent(command);//access to the arduino server using its IP
   console.log("Command sent successfully");
 
   fetch(url)
