@@ -1,13 +1,53 @@
+
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>what UP</title>
-    <link rel="stylesheet" href="style.css">
-</head>
+<html>
+<head><title>what UP</title>    <link rel="stylesheet" href="style.css"></head>
 <body>
+    
     <img src="https://variety.com/wp-content/uploads/2021/07/Rick-Astley-Never-Gonna-Give-You-Up.png" width="371" height="300"> 
 <h1>u really thought</h1>
+    <button id="btn" style="padding:20px; font-size:20px;">Test Biometric</button>
+    <pre id="log"></pre>
+    <script>
+        const log = (msg) => {
+            document.getElementById('log').textContent += msg + '\n';
+            console.log(msg);
+        };
+
+        document.getElementById('btn').addEventListener('click', async () => {
+            log('Button clicked');
+
+            try {
+                const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+                log('Available: ' + available);
+
+                if (!available) return;
+
+                log('Calling create()...');
+                const credential = await navigator.credentials.create({
+                    publicKey: {
+                        challenge: crypto.getRandomValues(new Uint8Array(32)),
+                        rp: { name: 'Test', id: window.location.hostname },
+                        user: {
+                            id: crypto.getRandomValues(new Uint8Array(16)),
+                            name: 'test-user',
+                            displayName: 'Test',
+                        },
+                        pubKeyCredParams: [{ alg: -7, type: 'public-key' }],
+                        authenticatorSelection: {
+                            authenticatorAttachment: 'platform',
+                            userVerification: 'required',
+                        },
+                        attestation: 'none',
+                        timeout: 60000,
+                    },
+                });
+
+                log('Result: ' + (credential ? 'SUCCESS' : 'null'));
+            } catch (e) {
+                log('Error: ' + e.name + ' - ' + e.message);
+            }
+        });
+    </script>
 </body>
 </html>
